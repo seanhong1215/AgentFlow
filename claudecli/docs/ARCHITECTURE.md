@@ -20,7 +20,15 @@ claudecli/
 │   ├── database.js               # DB 連線 singleton、建表、種子資料
 │   │                             #   - WAL mode、foreign_keys ON
 │   │                             #   - 建立 5 張表（若不存在）
+│   │                             #   - 遷移：orders 加入 ecpay_trade_no（try/catch，已存在則跳過）
 │   │                             #   - seedAdminUser()、seedProducts()（已存在則跳過）
+│   ├── utils/
+│   │   └── ecpay.js              # 綠界 ECPay 工具函式（CMV-SHA256）
+│   │                             #   - ecpayUrlEncode()：ECPay 專用 URL 編碼（.NET 字元替換）
+│   │                             #   - generateCheckMacValue(params)：SHA256 CheckMacValue
+│   │                             #   - verifyCheckMacValue(params)：timing-safe 驗簽
+│   │                             #   - buildPaymentParams(order, items, tradeNo)：AIO 表單參數
+│   │                             #   - queryEcpayTrade(tradeNo)：呼叫 QueryTradeInfo/V5
 │   ├── middleware/
 │   │   ├── authMiddleware.js     # JWT 強驗證：無 token → 401；token 無效 → 401
 │   │   │                         #   解碼後再查 DB 確認使用者存在，注入 req.user
@@ -34,6 +42,7 @@ claudecli/
 │       ├── orderRoutes.js        # /api/orders（需登入）
 │       ├── adminProductRoutes.js # /api/admin/products（需 admin）
 │       ├── adminOrderRoutes.js   # /api/admin/orders（需 admin）
+│       ├── ecpayRoutes.js        # /api/ecpay（AIO 付款發起、OrderResultURL、notify、QueryTradeInfo）
 │       └── pageRoutes.js         # EJS 頁面路由（前台 + 後台）
 ├── views/
 │   ├── layouts/
@@ -99,6 +108,7 @@ node server.js
      b. require('./src/database') → initializeDatabase()
         - WAL mode、foreign_keys ON
         - CREATE TABLE IF NOT EXISTS（5 張表）
+        - ALTER TABLE orders ADD COLUMN ecpay_trade_no（try/catch，已存在則跳過）
         - seedAdminUser()（若不存在則插入）
         - seedProducts()（若 products 表為空則插入 8 筆）
      c. Express 中介軟體掛載（cors、json、urlencoded、sessionMiddleware）
@@ -116,6 +126,7 @@ node server.js
 | `/api/orders` | orderRoutes.js | JWT（router.use(authMiddleware)） | 訂單 |
 | `/api/admin/products` | adminProductRoutes.js | JWT + admin role | 後台商品 |
 | `/api/admin/orders` | adminOrderRoutes.js | JWT + admin role | 後台訂單 |
+| `/api/ecpay` | ecpayRoutes.js | 無（order-result/notify）、JWT（initiate/query） | 綠界 ECPay AIO 金流 |
 | `/` | pageRoutes.js | 無（前端 JS 自行驗證） | EJS 頁面 |
 
 ## 統一 API 回應格式
@@ -216,6 +227,7 @@ node server.js
 | recipient_address | TEXT | NOT NULL |
 | total_amount | INTEGER | NOT NULL |
 | status | TEXT | NOT NULL, DEFAULT 'pending', CHECK IN ('pending', 'paid', 'failed') |
+| ecpay_trade_no | TEXT | — （ECPay MerchantTradeNo；付款發起時寫入，用於 OrderResultURL 反查訂單） |
 | created_at | TEXT | NOT NULL, DEFAULT datetime('now') |
 
 ### order_items
