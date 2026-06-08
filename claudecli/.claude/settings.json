@@ -10,8 +10,24 @@
         "*.npmjs.org",
         "*.github.com",
         "github.com",
-        "*.githubusercontent.com"
+        "*.githubusercontent.com",
+        "payment-stage.ecpay.com.tw",
+        "payment.ecpay.com.tw",
+        "localhost:*"
       ]
     }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-files.sh"
+          }
+        ]
+      }
+    ]
   }
 }
