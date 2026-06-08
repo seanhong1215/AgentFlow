@@ -4,10 +4,21 @@
 
 ---
 
-## [未發布]
+## [1.1.0] — 2026-06-08
 
-### 計畫中
-- 綠界金流整合（ECPay AIO）
+### 新增
+- 綠界 ECPay AIO 金流整合（CMV-SHA256，信用卡付款）
+  - `POST /api/ecpay/initiate`：產生付款表單參數（含 CheckMacValue）
+  - `POST /api/ecpay/order-result`：接收綠界瀏覽器重導，驗簽後更新訂單狀態
+  - `POST /api/ecpay/notify`：接收綠界 Server-to-Server 通知（部署後使用）
+  - `GET /api/ecpay/query/:orderId`：主動呼叫 QueryTradeInfo 查詢付款結果（本機備援）
+- `orders.ecpay_trade_no` 欄位（自動 ALTER TABLE 遷移，不影響現有資料）
+- `src/utils/ecpay.js`：`ecpayUrlEncode`、`generateCheckMacValue`、`verifyCheckMacValue`、`buildPaymentParams`、`queryEcpayTrade`
+- 訂單詳情頁新增「使用綠界付款（信用卡）」主按鈕；原模擬按鈕降為次要（測試用）
+
+### 架構說明
+- 本機開發無法接收 ReturnURL（S2S），改以 `OrderResultURL`（瀏覽器 POST）更新付款結果
+- 測試環境 MerchantID: 3002607，設定於 `.env.example`
 
 ---
 
