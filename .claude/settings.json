@@ -1,22 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm test)",
-      "Bash(npm run *)",
-      "Bash(node *)",
-      "Bash(git status)",
-      "Bash(git log *)",
-      "Bash(git diff *)",
-      "Bash(git add *)",
-      "Bash(git commit *)"
+      "Edit(~/.npm/**)",
+      "Read(~/.npm/**)"
     ],
     "deny": [
       "Bash(rm -rf *)",
-      "Bash(git push --force*)",
-      "Bash(git reset --hard*)",
-      "Bash(DROP TABLE*)",
-      "Bash(curl * | bash)",
-      "Bash(npm publish*)"
+      "Bash(sudo *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "network": {
+      "allowLocalBinding": true,
+      "allowedDomains": [
+        "registry.npmjs.org",
+        "*.npmjs.org",
+        "*.github.com",
+        "github.com",
+        "*.githubusercontent.com"
+      ]
+    }
   }
 }
