@@ -33,7 +33,7 @@ function generateUniqueMerchantTradeNo(order) {
     if (!existing) return merchantTradeNo;
   }
 
-  throw new Error('Unable to generate unique ECPay MerchantTradeNo');
+  throw new Error('無法產生唯一的綠界特店交易編號');
 }
 
 /**
@@ -107,7 +107,7 @@ router.post('/', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'VALIDATION_ERROR',
-      message: '收件人姓名、Email 和地址為必填欄位'
+      message: '收件人姓名、電子郵件和地址為必填欄位'
     });
   }
 
@@ -116,7 +116,7 @@ router.post('/', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'VALIDATION_ERROR',
-      message: 'Email 格式不正確'
+      message: '電子郵件格式不正確'
     });
   }
 
@@ -334,14 +334,14 @@ router.get('/:id', (req, res) => {
 router.post('/:id/ecpay/checkout', (req, res) => {
   const order = getOwnedOrder(req.params.id, req.user.userId);
   if (!order) {
-    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: 'Order not found' });
+    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: '訂單不存在' });
   }
 
   if (!['pending', 'failed'].includes(order.status)) {
     return res.status(400).json({
       data: null,
       error: 'INVALID_STATUS',
-      message: 'Only pending or failed orders can be paid'
+      message: '只有待付款或付款失敗的訂單可以付款'
     });
   }
 
@@ -350,7 +350,7 @@ router.post('/:id/ecpay/checkout', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'ORDER_ITEMS_EMPTY',
-      message: 'Order has no items'
+      message: '訂單沒有商品明細'
     });
   }
 
@@ -378,7 +378,7 @@ router.post('/:id/ecpay/checkout', (req, res) => {
       order: checkoutOrder
     },
     error: null,
-    message: 'ECPay checkout params generated'
+    message: '已產生綠界付款參數'
   });
 });
 
@@ -386,14 +386,14 @@ router.post('/:id/ecpay/query', async (req, res) => {
   const order = getOwnedOrder(req.params.id, req.user.userId);
   const markFailedWhenUnpaid = req.body && req.body.markFailedWhenUnpaid === true;
   if (!order) {
-    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: 'Order not found' });
+    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: '訂單不存在' });
   }
 
   if (!order.ecpay_merchant_trade_no) {
     return res.status(400).json({
       data: null,
       error: 'ECPAY_TRADE_NOT_CREATED',
-      message: 'ECPay checkout has not been created for this order'
+      message: '此訂單尚未建立綠界付款流程'
     });
   }
 
@@ -401,11 +401,11 @@ router.post('/:id/ecpay/query', async (req, res) => {
   try {
     result = await ecpayService.queryTrade(order.ecpay_merchant_trade_no);
   } catch (err) {
-    console.error('ECPay query failed:', err.message);
+    console.error('綠界付款狀態查詢失敗：', err.message);
     return res.status(502).json({
       data: null,
       error: 'ECPAY_QUERY_FAILED',
-      message: 'Unable to verify ECPay payment status'
+      message: '無法驗證綠界付款狀態'
     });
   }
 
@@ -420,7 +420,7 @@ router.post('/:id/ecpay/query', async (req, res) => {
     return res.status(409).json({
       data: { tradeStatus: result.TradeStatus || null },
       error: 'ECPAY_AMOUNT_MISMATCH',
-      message: 'ECPay payment amount does not match the order amount'
+      message: '綠界付款金額與訂單金額不符'
     });
   }
 
@@ -465,24 +465,24 @@ router.post('/:id/ecpay/query', async (req, res) => {
     },
     error: null,
     message: newStatus === 'paid'
-      ? 'Payment verified'
+      ? '付款已確認'
       : newStatus === 'failed'
-        ? 'Payment failed'
-        : 'Payment is not completed yet'
+        ? '付款失敗'
+        : '付款尚未完成'
   });
 });
 
 router.post('/:id/ecpay/fail', (req, res) => {
   const order = getOwnedOrder(req.params.id, req.user.userId);
   if (!order) {
-    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: 'Order not found' });
+    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: '訂單不存在' });
   }
 
   if (!order.ecpay_merchant_trade_no) {
     return res.status(400).json({
       data: null,
       error: 'ECPAY_TRADE_NOT_CREATED',
-      message: 'ECPay checkout has not been created for this order'
+      message: '此訂單尚未建立綠界付款流程'
     });
   }
 
@@ -490,7 +490,7 @@ router.post('/:id/ecpay/fail', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'INVALID_STATUS',
-      message: 'Paid orders cannot be marked as failed'
+      message: '已付款訂單不可標記為付款失敗'
     });
   }
 
@@ -498,7 +498,7 @@ router.post('/:id/ecpay/fail', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'INVALID_STATUS',
-      message: 'Only pending or failed ECPay orders can be marked as failed'
+      message: '只有待付款或付款失敗的綠界訂單可以標記為付款失敗'
     });
   }
 
@@ -535,7 +535,7 @@ router.post('/:id/ecpay/fail', (req, res) => {
       }
     },
     error: null,
-    message: 'Payment failed'
+    message: '付款失敗'
   });
 });
 
@@ -615,7 +615,7 @@ router.patch('/:id/pay', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'VALIDATION_ERROR',
-      message: 'action 必須為 success 或 fail'
+      message: '操作必須為 success 或 fail'
     });
   }
 
@@ -628,7 +628,7 @@ router.patch('/:id/pay', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'INVALID_STATUS',
-      message: '訂單狀態不是 pending，無法付款'
+      message: '訂單狀態不是待付款，無法付款'
     });
   }
 

@@ -109,7 +109,7 @@ function seedAdminUser() {
     const hash = bcrypt.hashSync(adminPassword, saltRounds);
     db.prepare(
       'INSERT INTO users (id, email, password_hash, name, role) VALUES (?, ?, ?, ?, ?)'
-    ).run(uuidv4(), adminEmail, hash, 'Admin', 'admin');
+    ).run(uuidv4(), adminEmail, hash, '系統管理員', 'admin');
   }
 }
 

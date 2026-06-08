@@ -171,13 +171,13 @@ router.post('/', (req, res) => {
   const { name, description, price, stock, image_url } = req.body;
 
   if (!name) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'name 為必填欄位' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '商品名稱為必填欄位' });
   }
   if (price === undefined || price === null || !Number.isInteger(price) || price <= 0) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'price 必須為正整數' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '價格必須為正整數' });
   }
   if (stock === undefined || stock === null || !Number.isInteger(stock) || stock < 0) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'stock 必須為非負整數' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '庫存必須為非負整數' });
   }
 
   const id = uuidv4();
@@ -276,10 +276,10 @@ router.put('/:id', (req, res) => {
     return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '商品名稱不能為空' });
   }
   if (price !== undefined && (!Number.isInteger(price) || price <= 0)) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'price 必須為正整數' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '價格必須為正整數' });
   }
   if (stock !== undefined && (!Number.isInteger(stock) || stock < 0)) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'stock 必須為非負整數' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '庫存必須為非負整數' });
   }
 
   const updated = {

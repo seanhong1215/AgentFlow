@@ -34,7 +34,7 @@ function authMiddleware(req, res, next) {
     return res.status(401).json({
       data: null,
       error: 'UNAUTHORIZED',
-      message: 'Token 無效或已過期'
+      message: '登入權杖無效或已過期'
     });
   }
 }

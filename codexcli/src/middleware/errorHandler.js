@@ -9,7 +9,7 @@ const SAFE_MESSAGES = {
 };
 
 function errorHandler(err, req, res, _next) {
-  console.error('Unhandled error:', err.message);
+  console.error('未處理的錯誤：', err.message);
 
   const statusCode = err.status || err.statusCode || 500;
 

@@ -4,11 +4,11 @@ const PORT = process.env.PORT || 3001;
 
 if (require.main === module) {
   if (!process.env.JWT_SECRET) {
-    console.error('Fatal: JWT_SECRET is not set');
+    console.error('致命錯誤：尚未設定 JWT_SECRET');
     process.exit(1);
   }
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`伺服器已啟動，監聽連接埠 ${PORT}`);
   });
 }
 

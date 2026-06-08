@@ -112,8 +112,8 @@ $env:JWT_SECRET='test-secret'; npm test
 .\node_modules\.bin\vitest.cmd run tests\ecpay.test.js
 ```
 
-## ECPay result return note
+## 綠界付款結果返回說明
 
-`ClientBackURL` returns to `/orders/:id?payment=returned` and the page retries `QueryTradeInfo` briefly. `OrderResultURL` returns to `/orders/:id?payment=result`; the page queries ECPay first, and if the order cannot be confirmed `paid`, it calls `/api/orders/:id/ecpay/fail` to force local status to `failed`. Failed orders no longer show the manual confirmation button, but they can start a new ECPay checkout with a new `MerchantTradeNo`.
+`ClientBackURL` 會返回 `/orders/:id?payment=returned`，頁面會短時間重試 `QueryTradeInfo`。`OrderResultURL` 會返回 `/orders/:id?payment=result`；頁面會先查詢綠界付款狀態，若無法確認訂單已付款，就呼叫 `/api/orders/:id/ecpay/fail` 將本地狀態強制改為 `failed`。付款失敗的訂單不再顯示手動確認按鈕，但可以用新的 `MerchantTradeNo` 重新建立綠界付款流程。
 
 結果：`tests/ecpay.test.js` 12 個 tests 全部通過。完整測試若共用既有 `database.sqlite`，可能因 seed 商品庫存已被先前測試扣光而失敗；需重置測試資料庫或補測試商品後再跑完整 suite。

@@ -107,7 +107,7 @@
     "status": "pending"
   },
   "error": null,
-  "message": "success message"
+  "message": "成功訊息"
 }
 ```
 
@@ -117,7 +117,7 @@
 {
   "data": null,
   "error": "VALIDATION_ERROR",
-  "message": "safe user-facing message"
+  "message": "可安全顯示給使用者的錯誤訊息"
 }
 ```
 
@@ -135,7 +135,7 @@
     }
   },
   "error": null,
-  "message": "success message"
+  "message": "成功訊息"
 }
 ```
 
@@ -159,11 +159,11 @@
 4. user 存在時寫入 `req.user = { userId, email, role }`。
 5. token 缺失、格式錯誤、過期、簽章錯誤或 user 不存在時回 401。
 
-### Admin authorization
+### 管理員授權
 
 `adminMiddleware` 必須接在 `authMiddleware` 後方。若 `req.user` 不存在或 `role !== 'admin'`，回 403 `FORBIDDEN`。`/api/admin/products` 與 `/api/admin/orders` 在 router level 使用 `router.use(authMiddleware, adminMiddleware)`。
 
-### Cart dual-mode auth
+### 購物車雙模式認證
 
 `cartRoutes.js` 內部定義 `dualAuth`：
 
