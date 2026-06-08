@@ -1,52 +1,28 @@
-# CLAUDE.md — 花卉電商平台（Claude CLI 版）
+# CLAUDE.md
 
 ## 專案概述
-Node.js + Express 花卉電商平台，使用 EJS 模板、SQLite 資料庫、JWT 認證。
+花卉電商平台 — Node.js + Express 4 + EJS + SQLite (better-sqlite3) + JWT 認證 + Vue CDN 前端互動
 
-## 技術棧
-- **後端**：Node.js、Express 4、better-sqlite3、bcrypt、jsonwebtoken、uuid
-- **前端**：EJS、Tailwind CSS 4、Vue CDN（頁面互動）
-- **測試**：Vitest + Supertest
-- **API 文件**：swagger-jsdoc
-
-## 目錄結構
-```
-claudecli/
-├── app.js              # Express 應用設定（middleware、路由掛載）
-├── server.js           # HTTP 伺服器啟動入口
-├── src/
-│   ├── database.js     # SQLite 初始化與種子資料
-│   ├── middleware/     # auth、admin、error、session
-│   └── routes/         # API 路由
-├── views/              # EJS 模板（layouts、pages、partials）
-├── public/             # 靜態資源（CSS、JS）
-├── tests/              # Vitest 整合測試
-└── docs/               # 詳細文件（見下方）
-```
-
-## 詳細文件
-| 文件 | 說明 |
-|------|------|
-| [DEVELOPMENT.md](docs/DEVELOPMENT.md) | 命名規則、程式碼風格、錯誤處理 |
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | 架構全覽、資料流、模組互動 |
-| [FEATURES.md](docs/FEATURES.md) | 功能清單與狀態 |
-| [TESTING.md](docs/TESTING.md) | 測試規範與範例 |
-
-## 快速啟動
+## 常用指令
 ```powershell
-npm install
-Copy-Item .env.example .env   # 填入 JWT_SECRET
-npm run dev:server
-```
-
-## API 回應格式（所有端點統一）
-```json
-{ "data": ..., "error": "ERROR_CODE | null", "message": "說明文字" }
+npm run dev:server   # 啟動後端（port 3001）
+npm run dev:css      # 監聽 Tailwind CSS 變更
+npm start            # 建置 CSS 後啟動
+npm test             # 執行 Vitest 整合測試
+npm run openapi      # 產出 openapi.json
 ```
 
 ## 關鍵規則
-1. **資料庫操作**：直接使用 `better-sqlite3` 同步 API，不用 ORM
-2. **認證**：JWT Bearer Token，7 天有效，透過 `authMiddleware` 驗證
-3. **權限**：管理員路由加掛 `adminMiddleware`
-4. **錯誤**：非預期錯誤交由 `errorHandler` 統一處理，不在路由中 `console.error`
-5. **語系**：繁體中文，錯誤訊息與 UI 文字均使用中文
+- **API 回應格式統一**：所有端點回傳 `{ data, error, message }`，error 為 null 或錯誤代碼字串
+- **購物車雙模式認證**：`/api/cart` 接受 JWT Bearer Token **或** `X-Session-Id` header（未登入訪客購物車）
+- **DB 操作同步**：使用 better-sqlite3 同步 API，禁止 async/await 操作 DB
+- **功能開發使用 docs/plans/ 記錄計畫；完成後移至 docs/plans/archive/**
+- **語系**：所有 UI 文字、錯誤訊息、commit message 使用繁體中文
+
+## 詳細文件
+- [docs/README.md](docs/README.md) — 項目介紹與快速開始
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 架構、目錄結構、資料流、DB Schema
+- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — 開發規範、命名規則、計畫歸檔流程
+- [docs/FEATURES.md](docs/FEATURES.md) — 功能列表、行為描述、完成狀態
+- [docs/TESTING.md](docs/TESTING.md) — 測試規範與指南
+- [docs/CHANGELOG.md](docs/CHANGELOG.md) — 更新日誌
