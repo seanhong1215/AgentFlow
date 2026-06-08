@@ -1,0 +1,34 @@
+# Claude Code 開發規則
+
+## 語言與風格
+- 所有回應、說明、commit message 使用**繁體中文**
+- 程式碼遵循 DEVELOPMENT.md 的命名規則與風格
+- 不加不必要的註解；只在「為什麼」非顯而易見時才加
+
+## 優先讀取的文件
+開始任何開發任務前，先閱讀：
+1. CLAUDE.md — 快速理解專案
+2. docs/ARCHITECTURE.md — 確認程式碼放置位置
+3. docs/DEVELOPMENT.md — 遵守程式碼規範
+4. docs/FEATURES.md — 確認功能現況，避免重複開發
+
+## 修改規則
+- **不新增**不在任務範圍內的功能或抽象層
+- **不重構**任務以外的程式碼
+- 修改路由前，確認 API 回應格式符合統一規範
+- 新增功能後，同步更新 docs/FEATURES.md
+
+## 測試規則
+- 新增功能必須附帶整合測試（tests/*.test.js）
+- 測試規範見 docs/TESTING.md
+- 不 mock 資料庫，使用真實 SQLite
+
+## 資料庫規則
+- 只使用 better-sqlite3 同步 API
+- 欄位名稱維持 snake_case，不做 camelCase 轉換
+- 結構變更需同步更新 ARCHITECTURE.md
+
+## Git 規則
+- commit message 使用繁體中文，說明「為什麼」不是「做了什麼」
+- 每個邏輯單元一個 commit，不批次提交無關更改
+- 禁止 force push 到 main 分支
