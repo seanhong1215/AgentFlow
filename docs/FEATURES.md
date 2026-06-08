@@ -228,7 +228,7 @@ Request body:
 | 欄位 | 必填 | 型別 | 規則 |
 | --- | --- | --- | --- |
 | `recipientName` | 是 | string | 不可缺少 |
-| `recipientEmail` | 是 | string | 必須符合 email regex |
+| `recipientEmail` | 是 | string | 必須符合電子郵件格式 |
 | `recipientAddress` | 是 | string | 不可缺少 |
 
 業務邏輯：
@@ -334,7 +334,7 @@ Request body：無。
 | `TradeDesc` | 固定交易描述 |
 | `ItemName` | order items 以 `#` 串接 |
 | `ReturnURL` | `ECPAY_RETURN_URL` 或 `${BASE_URL}/api/ecpay/notify` |
-| `OrderResultURL` | `${BASE_URL}/orders/:id?payment=result`; browser result return. The page queries ECPay first and force marks `failed` if the order is not confirmed `paid`. |
+| `OrderResultURL` | `${BASE_URL}/orders/:id?payment=result`；瀏覽器付款結果返回位址。頁面會先查詢綠界付款狀態，若無法確認訂單已付款，就強制標記為 `failed`。 |
 | `ClientBackURL` | `${BASE_URL}/orders/:id?payment=returned` |
 | `ChoosePayment` | `ALL` |
 | `EncryptType` | `1` |

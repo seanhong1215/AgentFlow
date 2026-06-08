@@ -10,7 +10,7 @@ createApp({
 
     function validateLogin() {
       errors.value = {};
-      if (!loginForm.value.email.trim()) errors.value.email = '請輸入 Email';
+      if (!loginForm.value.email.trim()) errors.value.email = '請輸入電子郵件';
       if (!loginForm.value.password) errors.value.password = '請輸入密碼';
       return Object.keys(errors.value).length === 0;
     }
@@ -18,7 +18,7 @@ createApp({
     function validateRegister() {
       errors.value = {};
       if (!registerForm.value.name.trim()) errors.value.name = '請輸入姓名';
-      if (!registerForm.value.email.trim()) errors.value.email = '請輸入 Email';
+      if (!registerForm.value.email.trim()) errors.value.email = '請輸入電子郵件';
       if (!registerForm.value.password) {
         errors.value.password = '請輸入密碼';
       } else if (registerForm.value.password.length < 6) {

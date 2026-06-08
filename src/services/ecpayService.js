@@ -184,7 +184,7 @@ function parseUrlEncodedResponse(body) {
 
 async function queryTrade(merchantTradeNo, fetchImpl = global.fetch) {
   if (typeof fetchImpl !== 'function') {
-    throw new Error('Fetch API is unavailable in this Node.js runtime');
+    throw new Error('目前 Node.js 執行環境無法使用 Fetch API');
   }
 
   const config = getConfig();

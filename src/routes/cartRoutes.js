@@ -29,7 +29,7 @@ function dualAuth(req, res, next) {
       return res.status(401).json({
         data: null,
         error: 'UNAUTHORIZED',
-        message: 'Token 無效或已過期'
+        message: '登入權杖無效或已過期'
       });
     }
   }
@@ -41,7 +41,7 @@ function dualAuth(req, res, next) {
   return res.status(401).json({
     data: null,
     error: 'UNAUTHORIZED',
-    message: '請提供有效的登入 Token 或 X-Session-Id'
+    message: '請提供有效的登入權杖或 X-Session-Id'
   });
 }
 
@@ -188,12 +188,12 @@ router.post('/', dualAuth, (req, res) => {
   const { productId, quantity = 1 } = req.body;
 
   if (!productId) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'productId 為必填欄位' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '商品 ID 為必填欄位' });
   }
 
   const qty = parseInt(quantity);
   if (!Number.isInteger(qty) || qty < 1) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'quantity 必須為正整數' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '數量必須為正整數' });
   }
 
   const product = db.prepare('SELECT * FROM products WHERE id = ?').get(productId);
@@ -294,7 +294,7 @@ router.patch('/:itemId', dualAuth, (req, res) => {
 
   const qty = parseInt(quantity);
   if (!Number.isInteger(qty) || qty < 1) {
-    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: 'quantity 必須為正整數' });
+    return res.status(400).json({ data: null, error: 'VALIDATION_ERROR', message: '數量必須為正整數' });
   }
 
   const owner = getOwnerCondition(req);

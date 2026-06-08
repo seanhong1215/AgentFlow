@@ -26,11 +26,11 @@
       <!-- Login Form -->
       <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-4">
         <div>
-          <label class="block text-sm text-text-secondary mb-1">Email</label>
+          <label class="block text-sm text-text-secondary mb-1">電子郵件</label>
           <input
             v-model="loginForm.email"
             type="email"
-            placeholder="請輸入 Email"
+            placeholder="請輸入電子郵件"
             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-primary"
             :class="{ 'border-red-400': errors.email }"
           />
@@ -73,11 +73,11 @@
         </div>
 
         <div>
-          <label class="block text-sm text-text-secondary mb-1">Email</label>
+          <label class="block text-sm text-text-secondary mb-1">電子郵件</label>
           <input
             v-model="registerForm.email"
             type="email"
-            placeholder="請輸入 Email"
+            placeholder="請輸入電子郵件"
             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-primary"
             :class="{ 'border-red-400': errors.email }"
           />

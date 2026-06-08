@@ -61,7 +61,7 @@ const router = express.Router();
  *       400:
  *         description: 參數缺失或格式錯誤
  *       409:
- *         description: Email 已被註冊
+ *         description: 電子郵件已被註冊
  */
 router.post('/register', (req, res) => {
   const { email, password, name } = req.body;
@@ -70,7 +70,7 @@ router.post('/register', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'VALIDATION_ERROR',
-      message: 'email、password、name 為必填欄位'
+      message: '電子郵件、密碼與姓名為必填欄位'
     });
   }
 
@@ -79,7 +79,7 @@ router.post('/register', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'VALIDATION_ERROR',
-      message: 'Email 格式不正確'
+      message: '電子郵件格式不正確'
     });
   }
 
@@ -96,7 +96,7 @@ router.post('/register', (req, res) => {
     return res.status(409).json({
       data: null,
       error: 'CONFLICT',
-      message: 'Email 已被註冊'
+      message: '電子郵件已被註冊'
     });
   }
 
@@ -176,7 +176,7 @@ router.post('/register', (req, res) => {
  *       400:
  *         description: 參數缺失
  *       401:
- *         description: Email 或密碼錯誤
+ *         description: 電子郵件或密碼錯誤
  */
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
@@ -185,7 +185,7 @@ router.post('/login', (req, res) => {
     return res.status(400).json({
       data: null,
       error: 'VALIDATION_ERROR',
-      message: 'email 和 password 為必填欄位'
+      message: '電子郵件和密碼為必填欄位'
     });
   }
 
@@ -194,7 +194,7 @@ router.post('/login', (req, res) => {
     return res.status(401).json({
       data: null,
       error: 'UNAUTHORIZED',
-      message: 'Email 或密碼錯誤'
+      message: '電子郵件或密碼錯誤'
     });
   }
 
@@ -203,7 +203,7 @@ router.post('/login', (req, res) => {
     return res.status(401).json({
       data: null,
       error: 'UNAUTHORIZED',
-      message: 'Email 或密碼錯誤'
+      message: '電子郵件或密碼錯誤'
     });
   }
 

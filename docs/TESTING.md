@@ -44,8 +44,8 @@ npm test
 
 結果：
 
-- Test Files: 1 passed
-- Tests: 10 passed
+- 測試檔案：1 個通過
+- 測試案例：10 個通過
 
 完整測試 suite 目前仍使用本機 `database.sqlite`。若先前測試已大量扣除 seed 商品庫存，cart/order/admin order 測試可能因 `STOCK_INSUFFICIENT` 或建立訂單失敗而連鎖失敗；這是測試資料持久化問題，不代表綠界 checkout/query 變更失敗。
 
@@ -192,7 +192,7 @@ describe('Example API', () => {
 | 問題 | 原因 | 解法 |
 | --- | --- | --- |
 | 註冊/登入回 500 | 缺少 `JWT_SECRET` | 測試前設定 `$env:JWT_SECRET='test-secret'` |
-| helper 讀不到 token | auth API 失敗，`data` 為 null | 先看 stderr 的 `Unhandled error` |
+| helper 讀不到 token | auth API 失敗，`data` 為 null | 先看 stderr 的「未處理的錯誤」訊息 |
 | 購物車 API 回 401 | 缺少 `X-Session-Id` 或 Bearer token | 訪客 cart 加 `.set('X-Session-Id', sessionId)` |
 | 會員 cart 沒有合併訪客 cart | 測試未建立 session cart 或未用 Bearer token | 先用 session 加商品，再登入後用 token 呼叫 |
 | admin API 回 403 | token 是一般 user | 改用 `getAdminToken()` |

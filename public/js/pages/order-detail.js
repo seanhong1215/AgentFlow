@@ -42,11 +42,11 @@ createApp({
       ]);
 
       if (url.protocol !== 'https:' || !allowedHosts.has(url.hostname)) {
-        throw new Error('Invalid ECPay checkout URL');
+        throw new Error('綠界付款網址無效');
       }
 
       if (url.pathname !== '/Cashier/AioCheckOut/V5') {
-        throw new Error('Invalid ECPay checkout path');
+        throw new Error('綠界付款路徑無效');
       }
 
       return url.toString();
@@ -154,7 +154,7 @@ createApp({
         });
 
         order.value = res.data.order;
-        updatePaymentMessage('failed', 'Payment was not completed. This order has been marked as payment failed.');
+        updatePaymentMessage('failed', '付款未完成，訂單已標記為付款失敗。');
         return true;
       } catch (err) {
         updatePaymentMessage('failed', err?.data?.message || paymentMessages.failed.text);

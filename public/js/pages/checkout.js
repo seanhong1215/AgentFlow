@@ -20,9 +20,9 @@ createApp({
       errors.value = {};
       if (!form.value.recipientName.trim()) errors.value.recipientName = '請輸入收件人姓名';
       if (!form.value.recipientEmail.trim()) {
-        errors.value.recipientEmail = '請輸入 Email';
+        errors.value.recipientEmail = '請輸入電子郵件';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.recipientEmail)) {
-        errors.value.recipientEmail = 'Email 格式不正確';
+        errors.value.recipientEmail = '電子郵件格式不正確';
       }
       if (!form.value.recipientAddress.trim()) errors.value.recipientAddress = '請輸入收件地址';
       return Object.keys(errors.value).length === 0;
