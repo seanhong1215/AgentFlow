@@ -184,6 +184,37 @@
 | 商品管理 | `/admin/products` | `admin-products` | CRUD，需前端 Auth.requireAdmin() |
 | 訂單管理 | `/admin/orders` | `admin-orders` | 訂單列表與狀態篩選 |
 
+## 綠界金流（/api/ecpay）
+
+> 串接綠界 ECPay AIO（全方位金流），採 CMV-SHA256 協議。本機開發無法接收 ReturnURL（Server-to-Server），改以 `OrderResultURL`（瀏覽器 POST 重導）更新付款狀態；另提供 `QueryTradeInfo` 主動查詢作為備援。
+
+### POST /api/ecpay/initiate — 發起 ECPay 付款（需登入）
+- **必填**：`orderId`
+- **行為**：驗證訂單屬於本人且狀態為 `pending` → 產生 `MerchantTradeNo`（`EC` + 13 位 Unix ms）→ 寫入 `orders.ecpay_trade_no` → 計算 CheckMacValue → 回傳表單參數
+- **回傳**：`data.endpoint`（ECPay 收款 URL）+ `data.params`（所有表單欄位含 CheckMacValue）
+- **前端行為**：動態建立 `<form>`，設定 action/inputs，呼叫 `form.submit()` 導向綠界頁面
+
+### POST /api/ecpay/order-result — 付款後瀏覽器重導（OrderResultURL）
+- **無需認證**：由綠界透過瀏覽器 Form POST 呼叫
+- **行為**：驗證 CheckMacValue → 查 `orders.ecpay_trade_no` → 若 `RtnCode=1` 更新狀態為 `paid`，否則 `failed` → 重導至 `/orders/:id?payment=success|failed`
+- **本機可用**：此端點是瀏覽器發起的 POST（非 Server-to-Server），本機開發亦可正常運作
+
+### POST /api/ecpay/notify — 伺服器端付款通知（ReturnURL）
+- **無需認證**：由綠界伺服器發起（本機開發不會觸發）
+- **行為**：驗證 CheckMacValue → 更新訂單狀態 → 回應 `1|OK`
+- **冪等設計**：若訂單已非 pending，跳過更新直接回應
+
+### GET /api/ecpay/query/:orderId — 主動查詢付款狀態（需登入）
+- **行為**：呼叫綠界 `QueryTradeInfo/V5` API → 若 `TradeStatus=1` 且訂單為 pending，更新為 paid
+- **用途**：備援機制，當 OrderResultURL 未觸發時可手動查詢
+- **錯誤情境**：400 `NO_ECPAY_TRADE`（尚未發起付款）
+
+**MerchantTradeNo 格式**：`EC` + Unix ms timestamp（最多 15 字元，純英數字）
+**測試環境端點**：`https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5`
+**EncryptType**：`1`（SHA256）
+
+---
+
 ## 完成狀態彙整
 
 | 模組 | 狀態 |
@@ -197,4 +228,4 @@
 | 前台 EJS 頁面 | ✅ 完成 |
 | 後台 EJS 頁面 | ✅ 完成 |
 | OpenAPI 文件生成 | ✅ 完成 |
-| 綠界金流整合 | 🚧 待實作 |
+| 綠界金流整合（ECPay AIO + QueryTradeInfo） | ✅ 完成 |

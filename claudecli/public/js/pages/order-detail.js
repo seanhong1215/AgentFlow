@@ -24,6 +24,33 @@ createApp({
       cancel: { text: '付款已取消。', cls: 'bg-apricot/10 text-apricot border border-apricot/20' },
     };
 
+    async function payWithEcpay() {
+      if (!order.value || paying.value) return;
+      paying.value = true;
+      try {
+        const res = await apiFetch('/api/ecpay/initiate', {
+          method: 'POST',
+          body: JSON.stringify({ orderId: order.value.id })
+        });
+        const { endpoint, params } = res.data;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = endpoint;
+        for (const [k, v] of Object.entries(params)) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = k;
+          input.value = v;
+          form.appendChild(input);
+        }
+        document.body.appendChild(form);
+        form.submit();
+      } catch (e) {
+        Notification.show('付款發起失敗', 'error');
+        paying.value = false;
+      }
+    }
+
     async function simulatePay(action) {
       if (!order.value || paying.value) return;
       paying.value = true;
@@ -55,6 +82,6 @@ createApp({
       }
     });
 
-    return { order, loading, paying, paymentResult, statusMap, paymentMessages, handlePaySuccess, handlePayFail };
+    return { order, loading, paying, paymentResult, statusMap, paymentMessages, payWithEcpay, handlePaySuccess, handlePayFail };
   }
 }).mount('#app');

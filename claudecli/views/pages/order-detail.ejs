@@ -71,21 +71,32 @@
     </div>
 
     <!-- Payment Buttons -->
-    <div v-if="order.status === 'pending'" class="flex gap-4">
+    <div v-if="order.status === 'pending'" class="space-y-4">
+      <!-- ECPay Real Payment -->
       <button
-        @click="handlePaySuccess"
+        @click="payWithEcpay"
         :disabled="paying"
-        class="bg-sage text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-sage/90 transition-colors disabled:opacity-50"
+        class="w-full bg-rose-primary text-white px-8 py-4 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
       >
-        {{ paying ? '處理中...' : '付款成功' }}
+        {{ paying ? '跳轉綠界中...' : '使用綠界付款（信用卡）' }}
       </button>
-      <button
-        @click="handlePayFail"
-        :disabled="paying"
-        class="bg-red-500 text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-      >
-        {{ paying ? '處理中...' : '付款失敗' }}
-      </button>
+      <!-- Simulation buttons (testing only) -->
+      <div class="flex gap-3">
+        <button
+          @click="handlePaySuccess"
+          :disabled="paying"
+          class="flex-1 bg-sage/20 text-sage border border-sage/30 px-4 py-2 rounded-full text-xs font-medium hover:bg-sage/30 transition-colors disabled:opacity-50"
+        >
+          模擬付款成功（測試用）
+        </button>
+        <button
+          @click="handlePayFail"
+          :disabled="paying"
+          class="flex-1 bg-red-50 text-red-500 border border-red-100 px-4 py-2 rounded-full text-xs font-medium hover:bg-red-100 transition-colors disabled:opacity-50"
+        >
+          模擬付款失敗（測試用）
+        </button>
+      </div>
     </div>
   </template>
 </div>
