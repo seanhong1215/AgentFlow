@@ -37,4 +37,5 @@ coverage/
 *.swp
 
 .claude/*.local.json
+.claude/skills/
 public/css/output.css
