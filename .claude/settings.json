@@ -1,16 +1,5 @@
 {
-  "permissions": {
-    "allow": [
-      "Edit(~/.npm/**)",
-      "Read(~/.npm/**)"
-    ],
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(sudo *)",
-      "Bash(git push *)",
-      "Bash(git reset --hard *)"
-    ]
-  },
+  "permissions": {},
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
