@@ -1,0 +1,114 @@
+<div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>">
+  <h1 class="text-2xl font-bold text-text-primary mb-6" style="font-family: 'Noto Serif TC', serif;">訂單詳情</h1>
+
+  <div v-if="loading" class="flex justify-center py-12">
+    <div class="w-8 h-8 border-4 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <template v-else-if="order">
+    <div
+      v-if="paymentResult && paymentMessages[paymentResult]"
+      class="rounded-xl p-4 mb-6 text-sm"
+      :class="paymentMessages[paymentResult].cls"
+    >
+      <div class="flex items-center gap-3">
+        <div v-if="autoChecking || checking" class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin shrink-0"></div>
+        <span>{{ paymentMessage || paymentMessages[paymentResult].text }}</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm text-text-secondary">訂單編號：{{ order.order_no }}</p>
+          <p class="text-xs text-text-muted mt-1">建立時間：{{ new Date(order.created_at).toLocaleString('zh-TW') }}</p>
+          <p v-if="order.ecpay_merchant_trade_no" class="text-xs text-text-muted mt-1">
+            綠界特店交易編號：{{ order.ecpay_merchant_trade_no }}
+          </p>
+          <p v-if="order.ecpay_trade_no" class="text-xs text-text-muted mt-1">
+            綠界交易編號：{{ order.ecpay_trade_no }}
+          </p>
+          <p v-if="order.ecpay_payment_type" class="text-xs text-text-muted mt-1">
+            付款方式：{{ order.ecpay_payment_type }}
+          </p>
+          <p v-if="order.ecpay_payment_date" class="text-xs text-text-muted mt-1">
+            綠界付款時間：{{ order.ecpay_payment_date }}
+          </p>
+          <p v-if="order.payment_checked_at" class="text-xs text-text-muted mt-1">
+            最近確認時間：{{ new Date(order.payment_checked_at).toLocaleString('zh-TW') }}
+          </p>
+        </div>
+        <span
+          class="text-xs px-3 py-1 rounded-full font-medium shrink-0"
+          :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
+        >
+          {{ statusMap[order.status]?.label || order.status }}
+        </span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+      <h2 class="font-medium text-text-primary mb-3">收件資訊</h2>
+      <div class="text-sm space-y-2 text-text-secondary">
+        <p>收件人：{{ order.recipient_name }}</p>
+        <p>Email：{{ order.recipient_email }}</p>
+        <p>地址：{{ order.recipient_address }}</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6 overflow-x-auto">
+      <h2 class="font-medium text-text-primary mb-3">商品明細</h2>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-100 text-text-muted">
+            <th class="text-left py-2 font-normal">商品名稱</th>
+            <th class="text-right py-2 font-normal">單價</th>
+            <th class="text-right py-2 font-normal">數量</th>
+            <th class="text-right py-2 font-normal">小計</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in order.items" :key="item.id" class="border-b border-gray-50">
+            <td class="py-3 text-text-primary">{{ item.product_name }}</td>
+            <td class="py-3 text-right text-text-secondary">NT$ {{ item.product_price.toLocaleString() }}</td>
+            <td class="py-3 text-right text-text-secondary">{{ item.quantity }}</td>
+            <td class="py-3 text-right text-text-primary font-medium">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="pt-3 text-right font-bold text-text-primary">總計</td>
+            <td class="pt-3 text-right font-bold text-rose-primary text-lg">NT$ {{ order.total_amount.toLocaleString() }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div v-if="order.status === 'pending' || order.status === 'failed'" class="bg-white rounded-2xl shadow-sm p-6">
+      <h2 class="font-medium text-text-primary mb-2">綠界付款</h2>
+      <p class="text-sm text-text-secondary mb-4">
+        前往綠界完成付款後，按「返回商店」回到此頁，系統會自動向綠界查詢付款結果並更新訂單。若綠界資料尚未同步，請稍後重新確認。
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <button
+          @click="startEcpayPayment"
+          :disabled="paying || checking || autoChecking"
+          class="bg-sage text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-sage/90 transition-colors disabled:opacity-50"
+        >
+          {{ paying ? '轉往綠界中...' : (order.status === 'failed' ? '重新前往綠界付款' : '前往綠界付款') }}
+        </button>
+        <button
+          v-if="order.status === 'pending'"
+          @click="checkEcpayPayment"
+          :disabled="paying || checking || autoChecking"
+          class="bg-rose-primary text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-rose-dark transition-colors disabled:opacity-50"
+        >
+          {{ checking || autoChecking ? '確認中...' : '重新確認付款狀態' }}
+        </button>
+      </div>
+      <p class="text-xs text-text-muted mt-3">
+        本地端無法可靠接收綠界 Server Notify，訂單狀態以此頁自動查詢綠界 QueryTradeInfo 的結果為準。
+      </p>
+    </div>
+  </template>
+</div>
