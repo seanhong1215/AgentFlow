@@ -51,11 +51,13 @@ HTTP 狀態碼：
 | 購物車為空 | 400 | `CART_EMPTY` |
 | 庫存不足 | 400 | `STOCK_INSUFFICIENT` |
 | 狀態不允許 | 400 | `INVALID_STATUS` |
+| 訂單未發起綠界付款 | 400 | `NO_ECPAY_TRADE` |
 | 未登入 | 401 | `UNAUTHORIZED` |
 | 無權限 | 403 | `FORBIDDEN` |
 | 找不到資源 | 404 | `NOT_FOUND` |
 | 資源衝突 | 409 | `CONFLICT` |
 | 伺服器錯誤 | 500 | `INTERNAL_ERROR` |
+| 綠界 API 呼叫失敗 | 500 | `ECPAY_ERROR` |
 
 ## 新增 API 端點步驟
 
@@ -154,6 +156,10 @@ createOrder(); // 執行 transaction
 | `ADMIN_EMAIL` | 選填 | `admin@hexschool.com` | 種子管理員 email |
 | `ADMIN_PASSWORD` | 選填 | `12345678` | 種子管理員密碼 |
 | `NODE_ENV` | 選填 | — | `test` 時 bcrypt saltRounds 降為 1 |
+| `ECPAY_MERCHANT_ID` | 選填 | `3002607` | 綠界商店代號（測試環境） |
+| `ECPAY_HASH_KEY` | 選填 | 見 .env.example | CheckMacValue HashKey |
+| `ECPAY_HASH_IV` | 選填 | 見 .env.example | CheckMacValue HashIV |
+| `ECPAY_ENV` | 選填 | `staging` | `staging` 或 `production`（控制 ECPay API 端點） |
 
 ## 計畫歸檔流程
 
